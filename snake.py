@@ -17,8 +17,8 @@ def exit(): #this function is used to quit the loop while True.
 class FRUIT:
 
     def __init__(self):
-        self.x = random.randint(0,cells_number)
-        self.y = random.randint(0,cells_number)
+        self.x = random.randint(0,cells_number-1)
+        self.y = random.randint(0,cells_number-1)
         self.pos = Vector2(self.x,self.y)
 
     def draw_fruit(self):
