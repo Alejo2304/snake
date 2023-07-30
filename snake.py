@@ -4,12 +4,8 @@ from pygame.math import Vector2
 #main varibles
 cells_number = 20
 cells_size = 30
-
 size = width, height = cells_number*cells_size, cells_number*cells_size
 fps =  60
-
-#Main Functions
-
 
 class FRUIT:
 
@@ -32,7 +28,7 @@ class FRUIT:
 class SNAKE:
 
     def __init__(self):
-        self.body = [Vector2(5,10),Vector2(6,10),Vector2(7,10)]
+        self.body = [Vector2(5,10),Vector2(4,10),Vector2(3,10)]
         self.direction = Vector2(1,0)
         self.new_block = False
 
@@ -66,6 +62,7 @@ class MAIN:
     def update(self):
         self.snake.move_snake()
         self.check_collision()
+        self.check_fail()
 
     def draw_elements(self):
         self.fruit.draw_fruit()
@@ -77,6 +74,20 @@ class MAIN:
             self.fruit.randomize()
             # add another block to the snake
             self.snake.add_block()
+    
+    def check_fail(self):
+        #check if snake outside screen in x
+        if not 0 <= self.snake.body[0].x < cells_number or not 0 <= self.snake.body[0].y < cells_number:
+            self.game_over()
+        #check if snake hits itself
+        for block in self.snake.body[1:]:
+            if block == self.snake.body[0]:
+                self.game_over()
+
+
+    def game_over(self):
+        pygame.quit()
+        sys.exit()
 
 #initialize pygame.
 pygame.init
@@ -84,14 +95,11 @@ screen = pygame.display.set_mode(size)  #creates the window.
 pygame.display.set_caption('Snake Game') #change caption of the window
 clock = pygame.time.Clock()
 
-
 SCREEN_UPDATE = pygame.USEREVENT #creates a custom event that will later help us to set a timer. 
 pygame.time.set_timer(SCREEN_UPDATE, 150) #It triggers our event Screen update every 150 ms
-
 main_game = MAIN()
+
 while True:
-    #draw all our elements
-    #check for the event pygame.QUIT and exit the execution.
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit(0)
@@ -100,15 +108,18 @@ while True:
             main_game.update()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                main_game.snake.direction = Vector2(0,-1)
+                if main_game.snake.direction.y != 1:
+                    main_game.snake.direction = Vector2(0,-1)
             if event.key == pygame.K_DOWN:
-                main_game.snake.direction = Vector2(0,1)
+                if main_game.snake.direction.y != -1:
+                    main_game.snake.direction = Vector2(0,1)
             if event.key == pygame.K_LEFT:
-                main_game.snake.direction = Vector2(-1,0)
+                if main_game.snake.direction.x != 1:
+                    main_game.snake.direction = Vector2(-1,0)
             if event.key == pygame.K_RIGHT:
-                main_game.snake.direction = Vector2(1,0)
-    
-    
+                if main_game.snake.direction.x != -1:
+                    main_game.snake.direction = Vector2(1,0)
+        
     screen.fill(pygame.Color('green')) #fill the background with green color.
     main_game.draw_elements()
     pygame.display.update()
