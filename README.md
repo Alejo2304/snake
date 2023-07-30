@@ -17,30 +17,68 @@ cells_size = 30 (pixels.)
 # Class FRUIT
 This class will have 2 main sections, set position and draw fruit, in set position we will use a random number to generate the X cell and the Y cell. Then with draw functions we will place our Fruit into the screen.
 
+def __init__
+
+    defines the variable x, y that represent the position in x axe and y axe, then in the variable pos we create a vector using x and y
+
+def draw_fruit
+
+    creates a rectangle and then draw the rectangle in the screen
+
+def randomize
+
+    updates the position of the fruit to a random position in the screen. 
+
 # class SNAKE
-It creates an snake, it will work really similar to FRUIT, but instead of draw in just one cell, we will store and draw multiple cells that will represent our main character, the snake. 
+    It creates an snake, it will work really similar to FRUIT, but instead of draw in just one cell, we will store and draw multiple cells that will represent our main character, the snake. 
 
- def __init__
+    def __init__
 
- it containes self.body that represent the vectors where our snake is. 
- as well it containes self.direction, this one represent in which curret direction our 
- snake is moving. 
+    it containes self.body that represent the vectors where our snake is. 
+    as well it containes self.direction, this one represent in which curret direction our 
+    snake is moving. 
 
+    def draw_snake
 
-# SNAKE movements
-Now the snake is created it is needed to add some movement to the snake, how it works?
+    This function will draw our snake into the screen.
+    first it will create a rectangle and then will draw that reactangle into the screen.
 
-The snake is currently placed in an especific number of cells, in order to move the snake the head is moved to a new block, the block before the head will update its position to the place the head was before and the same will happen to the other blocks.
+    def move_snake
 
-The requirements
+    this function will help us to move our snake into the screen, as well will add a new block when the condition new_block is true
 
-1. We need a player input (event)
-2. move the snake to the input provided on a certain time, we will need 
+    def add_block
+
+    will change our boolean variable to True if the snake eat a fruit
 
 # Class MAIN
 This class will contain the main logic that will be used for our game to run. 
 
+    def __init__
+    creates the object fruit and snake. 
+
+    def update
+    this function calls the functions move_snake, check_collision, check_fail
+
+    def draw_elements
+    calls the fuctions draw_fruit and draw_snake
+
+    def check_collision
+    this fuction will check if the snake eats a fruit, and if it does will call the fuction randomize for fruit and add_block for snake. 
+
+    def check_fail
+    this function will check if the snake is outside of the screen and then call the function game_over
+
+    As well if the snake hits itself will call the fuction game_over
+
+    def game_over
+    this fuctions will end the execution of the program
+
+
 # while True:
-inside this infinite loop we will gather the events necessary for quiting the game,
-chaging the direction of the snake, and of course drawing all of our objects into 
-the screen. 
+inside this infinite loop we will gather the events necessaries for change the direction of the snake.
+
+as well we will call the fuction main_game.update() each time the event SCREEN_UPDATE is triggered by our timer. 
+
+we will call the fuction main_game.draw_elements to draw our snake and fruit into the screen. 
+
