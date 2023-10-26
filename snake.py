@@ -1,4 +1,4 @@
-import sys, pygame, random
+import sys, pygame, random, time
 from pygame.math import Vector2
 
 #main varibles
@@ -54,10 +54,21 @@ class SNAKE:
     def add_block(self):
         self.new_block = True
 
+class SCORE:
+    def __init__(self):
+        self.score = 0
+
+    def add_score(self):
+        self.score += 100
+
+    def draw_score(self):
+        print(self.score)
+
 class MAIN:
     def __init__(self):
         self.snake = SNAKE()
         self.fruit = FRUIT()
+        self.score = SCORE()
 
     def update(self):
         self.snake.move_snake()
@@ -67,9 +78,12 @@ class MAIN:
     def draw_elements(self):
         self.fruit.draw_fruit()
         self.snake.draw_snake()
+        self.score.draw_score()
 
     def check_collision(self):
         if self.fruit.pos == self.snake.body[0]:
+            #add score
+            self.score.add_score()
             #Move the fruit of position.
             self.fruit.randomize()
             # add another block to the snake
