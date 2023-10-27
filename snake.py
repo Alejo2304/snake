@@ -2,8 +2,8 @@ import sys, pygame, random, time
 from pygame.math import Vector2
 
 #main varibles
-cells_number = 20
-cells_size = 30
+cells_number = 20 #NUMBER OF CELLS INS THE GRID
+cells_size = 30 #SIZE IN PX OF EACH CELL
 size = width, height = cells_number*cells_size, cells_number*cells_size
 fps =  60
 
@@ -57,12 +57,17 @@ class SNAKE:
 class SCORE:
     def __init__(self):
         self.score = 0
+        self.text_size = 50
 
     def add_score(self):
         self.score += 100
 
     def draw_score(self):
-        print(self.score)
+        font = pygame.font.Font(None, self.text_size)
+        text = font.render(f"Your Score is: {self.score}", 1, (255,  0,  0))
+        textpos = text.get_rect()
+        textpos.topleft = screen.get_rect().topleft
+        screen.blit(text, textpos)
 
 class MAIN:
     def __init__(self):
@@ -104,7 +109,7 @@ class MAIN:
         sys.exit()
 
 #initialize pygame.
-pygame.init
+pygame.init()
 screen = pygame.display.set_mode(size)  #creates the window. 
 pygame.display.set_caption('Snake Game') #change caption of the window
 clock = pygame.time.Clock()

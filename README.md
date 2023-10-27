@@ -55,14 +55,15 @@ def randomize
     This class initialize an score in 0 and add points after every fruit that the snake ate
 
     def __init__
-    initialize the variable score at 0
+    initialize the variable score at 0 and the font_size for the text
 
     def add_score 
     this add 100 points to the score, it is called in the class Main, in check_collision
     
     def draw_score
     this is intented to be a way to draw in screen the score so the user is able to see it while playing
-    
+    Here it renders the text with the score and draw in into the screen
+
 # Class MAIN
     This class will contain the main logic that will be used for our game to run. 
 
