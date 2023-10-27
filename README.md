@@ -95,3 +95,20 @@ as well we will call the fuction main_game.update() each time the event SCREEN_U
 
 we will call the fuction main_game.draw_elements to draw our snake and fruit into the screen. 
 
+
+# /DB/db.py
+    This module defines a database and creates the functions:
+
+    # class DB_SNAKE:
+        def open_connection(self)
+        It creates a connection with the database
+
+        def execute(self, sql)
+        it execute SQL orders for Sqlite, it can receive a file path of an sql script or an sql instruction
+
+        def close_connection(self)
+        diconnect the database.
+
+# /DB/sankegame.db
+
+    Here is our database, it will save the records of the game in the tables player, game, fruit, game_per_fruit
