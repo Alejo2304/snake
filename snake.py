@@ -1,11 +1,37 @@
 import sys, pygame, random, time
+from DB.db import DB_SNAKE
 from pygame.math import Vector2
+
 
 #main varibles
 cells_number = 20 #NUMBER OF CELLS INS THE GRID
 cells_size = 30 #SIZE IN PX OF EACH CELL
 size = width, height = cells_number*cells_size, cells_number*cells_size
 fps =  60
+db = DB_SNAKE()
+db.open_connection()
+
+class PLAYER:
+    def __init__(self):
+        self.email = db.execute("SELECT email FROM players WHERE players.email = 'GUEST';")
+        self.password = db.execute("SELECT password FROM players WHERE players.email = 'GUEST';")
+
+    def register(self):
+        email = str(input("Por favor ingrese su correo electronico: "))
+        password = str(input("Por favor ingrese su contraseña: "))
+        nickname = str(input("Por favor ingrese su nickname: "))
+
+        email_select = db.execute(f"SELECT email FROM players WHERE players.email = '{email}';")
+        nickname_select = db.execute(f"SELECT nickname FROM players WHERE players.nickname = '{nickname}';")
+
+
+        if email_select != None:
+            print("Error, el correo ya se encuentra registrado.")
+        elif nickname_select != None:
+            print("Error, el nickname ya se encuentra registrado.")
+        else:
+            db.execute(f"INSERT INTO players (email, password, nickname, register_date) VALUES('{email}', '{password}', '{nickname}', CURRENT_TIMESTAMP); ")
+            print("El registro ha sido añadido con exito")
 
 class FRUIT:
 
@@ -74,6 +100,7 @@ class MAIN:
         self.snake = SNAKE()
         self.fruit = FRUIT()
         self.score = SCORE()
+        self.player = PLAYER()
 
     def update(self):
         self.snake.move_snake()
@@ -105,8 +132,13 @@ class MAIN:
 
 
     def game_over(self):
+        db.close_connection()
         pygame.quit()
         sys.exit()
+
+#Validates the user
+player = PLAYER()
+player.register()
 
 #initialize pygame.
 pygame.init()

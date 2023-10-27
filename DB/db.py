@@ -3,7 +3,7 @@ import sqlite3, os
 class DB_SNAKE:
 
     def __init__(self):
-        self.database_name = 'snakegame.db'
+        self.database_name = 'DB/snakegame.db'
 
     def open_connection(self):
         self.conn = sqlite3.connect(self.database_name)
@@ -13,10 +13,13 @@ class DB_SNAKE:
         if os.path.isfile(sql):
             with open(sql, 'r') as file:
                 sql_script = file.read()
-            self.cur.executescript(sql_script)    
+            self.cur.executescript(sql_script)  
+            return self.cur.fetchall()  
         else:
             self.cur.execute(sql)
+            return self.cur.fetchone()
             
+        
     def close_connection(self):
         self.conn.commit()
         self.conn.close()
@@ -24,6 +27,6 @@ class DB_SNAKE:
 '''
 db_snake = DB_SNAKE()
 db_snake.open_connection()
-db_snake.execute("create_tables.sql")
+db_snake.execute("guest.sql")
 db_snake.close_connection()
 '''
