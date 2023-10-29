@@ -1,5 +1,7 @@
 import sys, pygame, random, time
-from DB.db import DB_SNAKE
+import tkinter as tk
+from tkinter import ttk
+from db import DB_SNAKE
 from pygame.math import Vector2
 
 
@@ -12,26 +14,35 @@ db = DB_SNAKE()
 db.open_connection()
 
 class PLAYER:
+
     def __init__(self):
-        self.email = db.execute("SELECT email FROM players WHERE players.email = 'GUEST';")
-        self.password = db.execute("SELECT password FROM players WHERE players.email = 'GUEST';")
+        self.email = ""
+        self.password = ""
 
-    def register(self):
-        email = str(input("Por favor ingrese su correo electronico: "))
-        password = str(input("Por favor ingrese su contraseña: "))
-        nickname = str(input("Por favor ingrese su nickname: "))
+    def login(self, email = 'guest', password = ''):
 
-        email_select = db.execute(f"SELECT email FROM players WHERE players.email = '{email}';")
-        nickname_select = db.execute(f"SELECT nickname FROM players WHERE players.nickname = '{nickname}';")
+        email_select = db.execute(f"SELECT email FROM players WHERE players.email = '{email.lower()}';")
+        password_select = db.execute(f"SELECT password FROM players WHERE players.email = '{email.lower()}';")
 
+        if email == email_select[0] and password == password_select[0]:
+            self.email = email
+            self.password = password
+            print("Ingreso exitoso")
+        else:
+            print("Usuario o contraseña incorrectos")
+            
+    def register(self, email, password, nickname):
+
+        email_select = db.execute(f"SELECT email FROM players WHERE players.email = '{email.lower()}';")
+        nickname_select = db.execute(f"SELECT nickname FROM players WHERE players.nickname = '{nickname.lower()}';")
 
         if email_select != None:
-            print("Error, el correo ya se encuentra registrado.")
+            return "Error, el correo ya se encuentra registrado."
         elif nickname_select != None:
-            print("Error, el nickname ya se encuentra registrado.")
+            return "Error, el nickname ya se encuentra registrado."
         else:
             db.execute(f"INSERT INTO players (email, password, nickname, register_date) VALUES('{email}', '{password}', '{nickname}', CURRENT_TIMESTAMP); ")
-            print("El registro ha sido añadido con exito")
+            return "El registro ha sido añadido con exito"
 
 class FRUIT:
 
@@ -136,12 +147,11 @@ class MAIN:
         pygame.quit()
         sys.exit()
 
-#Validates the user
-player = PLAYER()
-player.register()
+
 
 #initialize pygame.
 pygame.init()
+#SET UP THE WINDOW
 screen = pygame.display.set_mode(size)  #creates the window. 
 pygame.display.set_caption('Snake Game') #change caption of the window
 clock = pygame.time.Clock()
