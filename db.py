@@ -27,6 +27,6 @@ class DB_SNAKE:
 '''
 db_snake = DB_SNAKE()
 db_snake.open_connection()
-db_snake.execute("guest.sql")
+db_snake.execute("DB/deleterecord.sql")
 db_snake.close_connection()
 '''

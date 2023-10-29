@@ -1,7 +1,8 @@
 import sys, pygame, random, time
 import tkinter as tk
 from tkinter import ttk
-from db import DB_SNAKE
+from menu_gui import DB_SNAKE
+from main_menu import MENU
 from pygame.math import Vector2
 
 
@@ -24,12 +25,13 @@ class PLAYER:
         email_select = db.execute(f"SELECT email FROM players WHERE players.email = '{email.lower()}';")
         password_select = db.execute(f"SELECT password FROM players WHERE players.email = '{email.lower()}';")
 
-        if email == email_select[0] and password == password_select[0]:
-            self.email = email
-            self.password = password
-            print("Ingreso exitoso")
+        if email_select != None:
+            if email == email_select[0] and password == password_select[0]:
+                self.email = email
+                self.password = password
+                return True
         else:
-            print("Usuario o contraseña incorrectos")
+            return False
             
     def register(self, email, password, nickname):
 
@@ -37,12 +39,12 @@ class PLAYER:
         nickname_select = db.execute(f"SELECT nickname FROM players WHERE players.nickname = '{nickname.lower()}';")
 
         if email_select != None:
-            return "Error, el correo ya se encuentra registrado."
+            return False
         elif nickname_select != None:
-            return "Error, el nickname ya se encuentra registrado."
+            return False
         else:
             db.execute(f"INSERT INTO players (email, password, nickname, register_date) VALUES('{email}', '{password}', '{nickname}', CURRENT_TIMESTAMP); ")
-            return "El registro ha sido añadido con exito"
+            return True
 
 class FRUIT:
 
@@ -148,6 +150,10 @@ class MAIN:
         sys.exit()
 
 
+player = PLAYER()
+menu = MENU()
+
+menu.show(player)
 
 #initialize pygame.
 pygame.init()
