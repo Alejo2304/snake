@@ -1,23 +1,32 @@
 import sys, pygame, random, time
 import tkinter as tk
 from tkinter import ttk
-from menu_gui import DB_SNAKE
-from main_menu import MENU
+from db import DB_SNAKE
+from menu_gui import MENU
 from pygame.math import Vector2
 
+#DATABASE
+db = DB_SNAKE()
+db.open_connection()
 
+game_id = db.execute(f"SELECT MAX(id_game) FROM games;")
+if game_id[0] == None:
+    game_id = 1
+else:
+    game_id = game_id[0] + 1
+    
 #main varibles
 cells_number = 20 #NUMBER OF CELLS INS THE GRID
 cells_size = 30 #SIZE IN PX OF EACH CELL
 size = width, height = cells_number*cells_size, cells_number*cells_size
+sec_played = 0
 fps =  60
-db = DB_SNAKE()
-db.open_connection()
+
 
 class PLAYER:
 
     def __init__(self):
-        self.email = ""
+        self.email = "guest"
         self.password = ""
 
     def login(self, email = 'guest', password = ''):
@@ -52,6 +61,8 @@ class FRUIT:
         self.x = random.randint(0,cells_number-1)
         self.y = random.randint(0,cells_number-1)
         self.pos = Vector2(self.x,self.y)
+        #this check how much fruits the snake eat per game.
+        self.fruits_eated = 0
 
     def draw_fruit(self):
         #fruit_rect creates a rectangle with a random position in the screen with the size of the cell
@@ -63,6 +74,10 @@ class FRUIT:
         self.x = random.randint(0,cells_number-1)
         self.y = random.randint(0,cells_number-1)
         self.pos = Vector2(self.x,self.y)        
+
+    def set_fruits(self, value):
+        self.fruits_eated += value
+        
 
 class SNAKE:
 
@@ -99,7 +114,7 @@ class SCORE:
         self.text_size = 50
 
     def add_score(self):
-        self.score += 100
+        self.score += 100 #pending to update from the DATABASE
 
     def draw_score(self):
         font = pygame.font.Font(None, self.text_size)
@@ -131,8 +146,11 @@ class MAIN:
             self.score.add_score()
             #Move the fruit of position.
             self.fruit.randomize()
-            # add another block to the snake
+            #update counter of fruits
+            self.fruit.set_fruits(1)
+            #add another block to the snake
             self.snake.add_block()
+            
     
     def check_fail(self):
         #check if snake outside screen in x
@@ -145,6 +163,8 @@ class MAIN:
 
 
     def game_over(self):
+        db.execute(f"INSERT INTO games(id_game,seconds_played, fk_player) VALUES({game_id},{sec_played}, '{player.email}');")
+        db.execute(f"INSERT INTO fruits_per_game(fk_idfruit, fk_idgame, total_fruits) VALUES(1,{game_id},{main_game.fruit.fruits_eated});")
         db.close_connection()
         pygame.quit()
         sys.exit()
@@ -162,9 +182,10 @@ screen = pygame.display.set_mode(size)  #creates the window.
 pygame.display.set_caption('Snake Game') #change caption of the window
 clock = pygame.time.Clock()
 
-SCREEN_UPDATE = pygame.USEREVENT #creates a custom event that will later help us to set a timer. 
-pygame.time.set_timer(SCREEN_UPDATE, 150) #It triggers our event Screen update every 150 ms
+SCREEN_UPDATE = pygame.USEREVENT #creates a custom event that will later help us to set a timer
+pygame.time.set_timer(SCREEN_UPDATE, 100) #It triggers our event Screen update every 150 ms
 main_game = MAIN()
+i = 0
 
 while True:
     for event in pygame.event.get():
@@ -173,6 +194,11 @@ while True:
 
         if event.type == SCREEN_UPDATE:
             main_game.update()
+            i += 1
+            if i == 10:
+                sec_played += 1
+                i = 0
+        
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                 if main_game.snake.direction.y != 1:
